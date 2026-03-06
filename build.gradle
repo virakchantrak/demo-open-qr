@@ -1,0 +1,82 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.3'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = "$version"
+description = 'demo-invoicing-service'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        def env = (System.getenv("DEPLOY_ENV") ?: "dev").toLowerCase()
+        def projectId = (env in ["dev", "qa"]) ? "573" : "320"
+        url = "https://git.wingbank.com.kh/api/v4/projects/${projectId}/dependency_proxy/packages/maven"
+        credentials(PasswordCredentials) {
+            username = "virakchantrak.son"
+            password = "glpat-Yl9_hcD2MWXnPPkgP3d0GW86MQp1OjV2CA.01.0y0ds7cyw"
+
+        }
+        authentication {
+            basic(BasicAuthentication)
+        }
+    }
+}
+
+ext {
+    set("springCloudVersion", "2025.0.1")
+    set("lombokVersion", "1.18.38")
+    set("mapstructVersion", "1.6.3")
+    set("postgresql", "42.7.7")
+    set("khemarak", "2.0.0")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    }
+}
+
+dependencies {
+    // framework
+    implementation "kh.com.wingbank.khemarak:khemarak-framework-starter-api:$khemarak"
+
+    // Spring Boot
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
+
+    // DB
+    implementation "org.postgresql:postgresql:$postgresql"
+
+    // Lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // MapStruct
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    compileOnly "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
+    // annotationProcessor
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // test
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+tasks.named("test", Test) {
+    useJUnitPlatform {
+        excludeTags 'ignore'
+    }
+}

@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: demo-service-invoicing
+
+  jackson:
+    default-property-inclusion: non-empty
+    property-naming-strategy: SNAKE_CASE
+    serialization:
+      indent-output: false
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/eco-service-invoicing
+    username: postgres
+    password: Virak@123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 16
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: false
+        generate_statistics: false
+        use_sql_comments: false
+        jdbc:
+          fetch_size: 50
+app:
+  file-prefix-domain: https://dfhajuscyucpz.cloudfront.net/
