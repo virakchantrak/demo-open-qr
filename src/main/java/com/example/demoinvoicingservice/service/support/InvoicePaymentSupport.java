@@ -98,15 +98,19 @@ public class InvoicePaymentSupport {
             String transactionId,
             String originalTransactionId
     ) throws BusinessException {
+
+        // Prepare list of order references to search for related invoices
         List<String> orderReferences = new ArrayList<>();
         if (!CollectionUtils.isEmpty(invoice.getOrderReferences())) {
             orderReferences.addAll(invoice.getOrderReferences());
         }
         orderReferences.add(invoice.getOrderReferenceNo());
 
+        // Get list of invoices by order reference and merchant ID
         List<InvoiceEntity> invoiceEntities = this.getListInvoiceByOrderReference(orderReferences, invoice.getMerchantId());
         if (CollectionUtils.isEmpty(invoiceEntities)) return;
 
+        // Update each invoice with payment details and create corresponding InvoicePaymentEntity
         for (InvoiceEntity invoiceEntity : invoiceEntities) {
             if (InvoiceStatus.CANCEL.name().equalsIgnoreCase(invoiceEntity.getInvoiceStatus())) continue;
 
